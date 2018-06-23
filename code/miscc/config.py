@@ -10,11 +10,11 @@ __C = edict()
 cfg = __C
 
 # Dataset name: flowers, birds
-__C.DATASET_NAME = 'birds'
+__C.DATASET_NAME = 'bookcover'
 __C.CONFIG_NAME = ''
 __C.DATA_DIR = ''
 __C.GPU_ID = 0
-__C.CUDA = True
+__C.CUDA = False
 __C.WORKERS = 6
 
 __C.RNN_TYPE = 'LSTM'   # 'GRU'

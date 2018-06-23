@@ -1,7 +1,7 @@
 CONFIG_NAME: 'DAMSM'
 
-DATASET_NAME: 'birds'
-DATA_DIR: '../data/birds'
+DATASET_NAME: 'bookcover'
+DATA_DIR: '../data/bookcover'
 GPU_ID: 0
 WORKERS: 1
 
@@ -28,4 +28,4 @@ TRAIN:
 
 TEXT:
     EMBEDDING_DIM: 256
-    CAPTIONS_PER_IMAGE: 10
+    CAPTIONS_PER_IMAGE: 2

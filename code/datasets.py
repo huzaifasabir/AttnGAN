@@ -144,36 +144,76 @@ class TextDataset(data.Dataset):
 
     def load_captions(self, data_dir, filenames):
         all_captions = []
-        for i in range(len(filenames)):
-            cap_path = '%s/text/%s.txt' % (data_dir, filenames[i])
-            with open(cap_path, "r") as f:
-                captions = f.read().decode('utf8').split('\n')
-                cnt = 0
-                for cap in captions:
-                    if len(cap) == 0:
-                        continue
-                    cap = cap.replace("\ufffd\ufffd", " ")
-                    # picks out sequences of alphanumeric characters as tokens
-                    # and drops everything else
-                    tokenizer = RegexpTokenizer(r'\w+')
-                    tokens = tokenizer.tokenize(cap.lower())
-                    # print('tokens', tokens)
-                    if len(tokens) == 0:
-                        print('cap', cap)
-                        continue
 
-                    tokens_new = []
-                    for t in tokens:
-                        t = t.encode('ascii', 'ignore').decode('ascii')
-                        if len(t) > 0:
-                            tokens_new.append(t)
-                    all_captions.append(tokens_new)
-                    cnt += 1
-                    if cnt == self.embeddings_num:
-                        break
-                if cnt < self.embeddings_num:
-                    print('ERROR: the captions for %s less than %d'
-                          % (filenames[i], cnt))
+
+
+        book_index = pickle.load( open( "bookindex.pickle", "rb" ) )
+        for i in range(len(filenames)):
+            #cap_path = '%s/text/%s.txt' % (data_dir, filenames[i])
+
+            #with open(cap_path, "r") as f:
+            captions = []
+            image_name = filenames[i].split('/')[1]
+            captions.append(book_index[image_name]['category1'])
+            captions.append(book_index[image_name]['title'])
+
+            #captions = f.read().decode('utf8').split('\n')
+            cnt = 0
+            for cap in captions:
+                if len(cap) == 0:
+                    continue
+                cap = cap.replace("\ufffd\ufffd", " ")
+                # picks out sequences of alphanumeric characters as tokens
+                # and drops everything else
+                tokenizer = RegexpTokenizer(r'\w+')
+                tokens = tokenizer.tokenize(cap.lower())
+                # print('tokens', tokens)
+                if len(tokens) == 0:
+                    print('cap', cap)
+                    continue
+
+                tokens_new = []
+                for t in tokens:
+                    t = t.encode('ascii', 'ignore').decode('ascii')
+                    if len(t) > 0:
+                        tokens_new.append(t)
+                all_captions.append(tokens_new)
+                cnt += 1
+                if cnt == self.embeddings_num:
+                    break
+            if cnt < self.embeddings_num:
+                print('ERROR: the captions for %s less than %d'
+                      % (filenames[i], cnt))
+        # for i in range(len(filenames)):
+        #     cap_path = '%s/text/%s.txt' % (data_dir, filenames[i])
+        #     with open(cap_path, "r") as f:
+        #         captions = f.read().decode('utf8').split('\n')
+        #         cnt = 0
+        #         for cap in captions:
+        #             if len(cap) == 0:
+        #                 continue
+        #             cap = cap.replace("\ufffd\ufffd", " ")
+        #             # picks out sequences of alphanumeric characters as tokens
+        #             # and drops everything else
+        #             tokenizer = RegexpTokenizer(r'\w+')
+        #             tokens = tokenizer.tokenize(cap.lower())
+        #             # print('tokens', tokens)
+        #             if len(tokens) == 0:
+        #                 print('cap', cap)
+        #                 continue
+
+        #             tokens_new = []
+        #             for t in tokens:
+        #                 t = t.encode('ascii', 'ignore').decode('ascii')
+        #                 if len(t) > 0:
+        #                     tokens_new.append(t)
+        #             all_captions.append(tokens_new)
+        #             cnt += 1
+        #             if cnt == self.embeddings_num:
+        #                 break
+        #         if cnt < self.embeddings_num:
+        #             print('ERROR: the captions for %s less than %d'
+        #                   % (filenames[i], cnt))
         return all_captions
 
     def build_dictionary(self, train_captions, test_captions):
@@ -296,9 +336,9 @@ class TextDataset(data.Dataset):
             data_dir = '%s/CUB_200_2011' % self.data_dir
         else:
             bbox = None
-            data_dir = self.data_dir
+            data_dir = '%s/subset_dataset' % self.data_dir
         #
-        img_name = '%s/images/%s.jpg' % (data_dir, key)
+        img_name = '%s/%s' % (data_dir, key)
         imgs = get_imgs(img_name, self.imsize,
                         bbox, self.transform, normalize=self.norm)
         # random select a sentence
